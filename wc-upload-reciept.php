@@ -49,7 +49,7 @@ if (!class_exists("peproDev_UploadReceiptWC")) {
     private $html_before;
     private $html_after;
     private $use_secure_link;
-    private $defaultImg;
+    private $defaultImg;   
     public function __construct() {
       $this->plugin_dir                       = plugin_dir_path(__FILE__);
       $this->assets_url                       = plugins_url("/assets/", __FILE__);
@@ -68,6 +68,7 @@ if (!class_exists("peproDev_UploadReceiptWC")) {
       $this->defaultImg                       = "{$this->assets_url}backend/images/NoImageLarge.png";
       define("PEPRODEV_RECEIPT_UPLOAD_EMAIL_PATH", plugin_dir_path(__FILE__));
       add_action("init", array($this, "init_plugin"));
+      add_action("init", array($this, "load_textdomain"));
       add_filter("woocommerce_email_classes", array($this, "register_email"), 1, 1);
       add_action("woocommerce_receipt_uploaded_notification", array($this, "trigger_receipt_uploaded_notification"));
       add_action("woocommerce_receipt_approved_notification", array($this, "trigger_receipt_approved_notification"));
@@ -1163,6 +1164,9 @@ if (!class_exists("peproDev_UploadReceiptWC")) {
     public function read_opt($mc, $def = "") {
       return get_option($mc) <> "" ? get_option($mc) : $def;
     }
+    public function load_textdomain() {
+      load_plugin_textdomain($this->td, false, dirname(plugin_basename(__FILE__)) . "/languages/");
+    } 
   }
   /**
    * load plugin and load textdomain then set a global variable to access plugin class!
@@ -1171,10 +1175,6 @@ if (!class_exists("peproDev_UploadReceiptWC")) {
    * @since   1.0.0
    * @license https://pepro.dev/license Pepro.dev License
    */
-  add_action('init', 'load_receipt_upload_textdomain');
-    function load_receipt_upload_textdomain() {
-        load_plugin_textdomain("receipt-upload", false, dirname(plugin_basename(__FILE__)) . "/languages/");
-    }
 
   add_action("plugins_loaded", function () {
     global $Pepro_Upload_Receipt;
